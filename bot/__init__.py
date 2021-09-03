@@ -186,10 +186,7 @@ except KeyError:
 
 try:
     USE_SERVICE_ACCOUNTS = getConfig("USE_SERVICE_ACCOUNTS")
-    if USE_SERVICE_ACCOUNTS.lower() == "true":
-        USE_SERVICE_ACCOUNTS = True
-    else:
-        USE_SERVICE_ACCOUNTS = False
+    USE_SERVICE_ACCOUNTS = USE_SERVICE_ACCOUNTS.lower() == "true"
 except KeyError:
     USE_SERVICE_ACCOUNTS = False
 
