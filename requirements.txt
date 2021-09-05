@@ -4,8 +4,6 @@ appdirs
 aria2p
 attrdict
 beautifulsoup4
-cloudscrape
-feedparser
 google-api-python-client
 google-auth-httplib2
 google-auth-oauthlib
@@ -25,7 +23,6 @@ requests
 telegraph
 tenacity
 TgCrypto
-torrentool==1.1.0
 urllib3
 yt-dlp
 
