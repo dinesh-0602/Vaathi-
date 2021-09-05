@@ -1,34 +1,25 @@
 import os
-import shutil
+import shutil, psutil
 import signal
-import time
 from sys import executable
+from datetime import datetime
+from quoters import Quote
+import time
+import pytz
 
-import psutil
 from pyrogram import idle
 from telegram.ext import CommandHandler
+from telegram.error import BadRequest, Unauthorized
 
-from bot import IGNORE_PENDING_REQUESTS, app, bot, botStartTime, dispatcher, updater
+from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, TIMEZONE, AUTHORIZED_CHATS
 from bot.helper.ext_utils import fs_utils
-from bot.helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper.bot_commands import BotCommands
-from bot.helper.telegram_helper.filters import CustomFilters
-from bot.helper.telegram_helper.message_utils import (
-    LOGGER,
-    editMessage,
-    sendLogFile,
-    sendMessage,
-)
-from bot.modules import (  # noqa
-    authorize,
-    cancel_mirror,
-    clone,
-    delete,
-    list,
-    mirror,
-    mirror_status,
-    watch,
-)
+from bot.helper.telegram_helper.message_utils import *
+from .helper.telegram_helper.filters import CustomFilters
+from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
+from bot.helper.telegram_helper import button_build
+from .modules import authorize, list, cancel_mirror, mirror_status, mirror, watch, delete
+now=datetime.now(pytz.timezone(f'{TIMEZONE}'))
 
 
 def stats(update, context):
@@ -59,7 +50,7 @@ def stats(update, context):
 def start(update, context):
     start_string = f"""
 This is a bot which can mirror all your links to Google drive!
-Type /{BotCommands.HelpCommand} to get a list of available commands
+Type /help to get a list of available commands
 """
     sendMessage(start_string, context.bot, update)
 
@@ -87,8 +78,6 @@ def log(update, context):
 
 def bot_help(update, context):
     help_string = f"""
-/{BotCommands.HelpCommand}: To get this message
-
 /{BotCommands.MirrorCommand} [download_url][magnet_link]: Start mirroring the link to google drive.
 Plzzz see this for full use of this command https://telegra.ph/Magneto-Python-Aria---Custom-Filename-Examples-01-20
 
@@ -116,14 +105,49 @@ Plzzz see this for full use of this command https://telegra.ph/Magneto-Python-Ar
     sendMessage(help_string, context.bot, update)
 
 
+botcmds = [
+        (f'{BotCommands.MirrorCommand}', 'Start Mirroring'),
+        (f'{BotCommands.ZipMirrorCommand}', 'Start mirroring and upload as .zip'),
+        (f'{BotCommands.UnzipMirrorCommand}', 'Extract files'),
+        (f'{BotCommands.CloneCommand}', 'Copy file/folder to Drive'),
+        (f'{BotCommands.deleteCommand}', 'Delete file from Drive'),
+        (f'{BotCommands.WatchCommand}', 'Mirror yt-dlp support link'),
+        (f'{BotCommands.ZipWatchCommand}', 'Zip Youtube Video'),
+        (f'{BotCommands.CancelMirror}', 'Cancel a task'),
+        (f'{BotCommands.CancelAllCommand}', 'Cancel all tasks'),
+        (f'{BotCommands.ListCommand}', 'Searches files in Drive'),
+        (f'{BotCommands.StatusCommand}', 'Get Mirror Status message'),
+        (f'{BotCommands.StatsCommand}', 'Bot Usage Stats'),
+        (f'{BotCommands.RestartCommand}', 'Restart the bot [owner/sudo only]'),
+        (f'{BotCommands.LogCommand}', 'Get the Bot Log [owner/sudo only]')
+    ]
+
+
 def main():
+    # Heroku restarted
+    quo_te = Quote.print()
+    GROUP_ID = os.environ.get("AUTHORIZED_CHATS")
+    kie = datetime.now(pytz.timezone(f'{TIMEZONE}'))
+    jam = kie.strftime('\n📅 𝘿𝘼𝙏𝙀: %d/%m/%Y\n⏲️ 𝙏𝙄𝙈𝙀: %I:%M%P')
+    if GROUP_ID is not None and isinstance(GROUP_ID, str):
+        try:
+            dispatcher.bot.sendMessage(f"{GROUP_ID}", f"𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃!♻️\n\n𝐐𝐮𝐨𝐭𝐞\n{quo_te}\n\n#Rebooted")
+        except Unauthorized:
+            LOGGER.warning(
+                "Bot isnt able to send message to support_chat, go and check!"
+            )
+        except BadRequest as e:
+            LOGGER.warning(e.message)
+
     fs_utils.start_cleanup()
+
     # Check if the bot is restarting
     if os.path.isfile(".restartmsg"):
         with open(".restartmsg") as f:
             chat_id, msg_id = map(int, f)
         bot.edit_message_text("Restarted successfully!", chat_id, msg_id)
         os.remove(".restartmsg")
+    bot.set_my_commands(botcmds)
 
     start_handler = CommandHandler(
         BotCommands.StartCommand,

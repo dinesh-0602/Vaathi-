@@ -1,11 +1,11 @@
-import faulthandler
 import logging
 import os
 import random
-import socket
 import string
 import threading
 import time
+import subprocess
+import requests
 
 import aria2p
 import telegram.ext as tg
@@ -13,11 +13,15 @@ from dotenv import load_dotenv
 from pyrogram import Client
 from telegraph import Telegraph
 
-faulthandler.enable()
-import subprocess
-
 from megasdkrestclient import MegaSdkRestClient
 from megasdkrestclient import errors as mega_err
+
+import psycopg2
+from psycopg2 import Error
+
+import socket
+import faulthandler
+faulthandler.enable()
 
 socket.setdefaulttimeout(600)
 
@@ -71,12 +75,18 @@ status_reply_dict = {}
 download_dict = {}
 # Stores list of users and chats the bot is authorized to use in
 AUTHORIZED_CHATS = set()
+SUDO_USERS = set()
 if os.path.exists("authorized_chats.txt"):
     with open("authorized_chats.txt", "r+") as f:
         lines = f.readlines()
         for line in lines:
             #    LOGGER.info(line.split())
             AUTHORIZED_CHATS.add(int(line.split()[0]))
+if os.path.exists('sudo_users.txt'):
+    with open('sudo_users.txt', 'r+') as f:
+        lines = f.readlines()
+        for line in lines:
+            SUDO_USERS.add(int(line.split()[0]))
 try:
     achats = getConfig("AUTHORIZED_CHATS")
     achats = achats.split(" ")
@@ -84,7 +94,13 @@ try:
         AUTHORIZED_CHATS.add(int(chats))
 except:
     pass
-
+try:
+    schats = getConfig('SUDO_USERS')
+    schats = schats.split(" ")
+    for chats in schats:
+        SUDO_USERS.add(int(chats))
+except:
+    pass
 try:
     BOT_TOKEN = getConfig("BOT_TOKEN")
     parent_id = getConfig("GDRIVE_FOLDER_ID")
@@ -113,6 +129,14 @@ telegraph.create_account(short_name=sname)
 telegraph_token = telegraph.get_access_token()
 LOGGER.info("Telegraph Token Generated: '" + telegraph_token + "'")
 
+try:
+    STATUS_LIMIT = getConfig('STATUS_LIMIT')
+    if len(STATUS_LIMIT) == 0:
+        raise KeyError
+    else:
+        STATUS_LIMIT = int(getConfig('STATUS_LIMIT'))
+except KeyError:
+    STATUS_LIMIT = None
 try:
     MEGA_KEY = getConfig("MEGA_KEY")
 
@@ -205,12 +229,34 @@ except KeyError:
     SHORTENER = None
     SHORTENER_API = None
 
-IGNORE_PENDING_REQUESTS = False
 try:
-    if getConfig("IGNORE_PENDING_REQUESTS").lower() == "true":
-        IGNORE_PENDING_REQUESTS = True
+    IGNORE_PENDING_REQUESTS = getConfig("IGNORE_PENDING_REQUESTS")
+    IGNORE_PENDING_REQUESTS = IGNORE_PENDING_REQUESTS.lower() == 'true'
+except KeyError:
+    IGNORE_PENDING_REQUESTS = False
+
+try:
+    TOKEN_PICKLE_URL = getConfig('TOKEN_PICKLE_URL')
+    if len(TOKEN_PICKLE_URL) == 0:
+        TOKEN_PICKLE_URL = None
 except KeyError:
     pass
+
+try:
+    ACCOUNTS_ZIP_URL = getConfig('ACCOUNTS_ZIP_URL')
+    if len(ACCOUNTS_ZIP_URL) == 0:
+        ACCOUNTS_ZIP_URL = None
+except KeyError:
+    pass
+
+try:
+    TIMEZONE = getConfig("Asia/Kolkata")
+    if len(TIMEZONE) == 0:
+        TIMEZONE = None
+    else:
+        TIMEZONE = None
+except KeyError:
+    TIMEZONE = "Asia/Kolkata"
 
 updater = tg.Updater(token=BOT_TOKEN)
 bot = updater.bot
