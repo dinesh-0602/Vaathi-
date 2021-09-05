@@ -11,7 +11,7 @@ js2py
 lxml
 megasdkrestclient
 psutil
-psycopg2-binary
+psycopg2
 pybase64
 Pyrogram
 python-dotenv
