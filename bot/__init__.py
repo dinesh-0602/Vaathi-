@@ -16,9 +16,6 @@ from telegraph import Telegraph
 from megasdkrestclient import MegaSdkRestClient
 from megasdkrestclient import errors as mega_err
 
-import psycopg2
-from psycopg2 import Error
-
 import socket
 import faulthandler
 faulthandler.enable()
