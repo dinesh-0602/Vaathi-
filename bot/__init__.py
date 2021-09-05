@@ -239,13 +239,32 @@ try:
     TOKEN_PICKLE_URL = getConfig('TOKEN_PICKLE_URL')
     if len(TOKEN_PICKLE_URL) == 0:
         TOKEN_PICKLE_URL = None
+    else:
+        res = requests.get(TOKEN_PICKLE_URL)
+        if res.status_code == 200:
+            with open('token.pickle', 'wb') as f:
+               f.truncate(0)
+               f.write(res.content)
+        else:
+            logging.error(res.status_code)
+            raise KeyError
 except KeyError:
     pass
-
 try:
     ACCOUNTS_ZIP_URL = getConfig('ACCOUNTS_ZIP_URL')
     if len(ACCOUNTS_ZIP_URL) == 0:
         ACCOUNTS_ZIP_URL = None
+    else:
+        res = requests.get(ACCOUNTS_ZIP_URL)
+        if res.status_code == 200:
+            with open('accounts.zip', 'wb') as f:
+               f.truncate(0)
+               f.write(res.content)
+        else:
+            logging.error(res.status_code)
+            raise KeyError
+        subprocess.run(["unzip", "-q", "-o", "accounts.zip"])
+        os.remove("accounts.zip")
 except KeyError:
     pass
 
