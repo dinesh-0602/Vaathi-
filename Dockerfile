@@ -3,7 +3,7 @@ FROM kenhv/mirrorbot:ubuntu
 WORKDIR /usr/src/app
 COPY . .
 
-COPY rerequirements.txt .
+COPY requirements.txt .
 RUN pip3 install --no-chache-dir -r requirements.txt
 
 RUN set -ex \
