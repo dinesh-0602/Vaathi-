@@ -35,6 +35,15 @@ logging.basicConfig(
     handlers=[logging.FileHandler("log.txt"), logging.StreamHandler()],
     level=logging.INFO,
 )
+CONFIG_FILE_URL = os.environ.get('CONFIG_FILE_URL', None)
+if CONFIG_FILE_URL is not None:
+    res = requests.get(CONFIG_FILE_URL)
+    if res.status_code == 200:
+        with open('config.env', 'wb') as f:
+           f.truncate(0)
+           f.write(res.content)
+    else:
+        logging.error(res.status_code)
 
 load_dotenv("config.env")
 
