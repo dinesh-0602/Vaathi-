@@ -251,10 +251,7 @@ except KeyError:
 
 try:
     TIMEZONE = getConfig("Asia/Kolkata")
-    if len(TIMEZONE) == 0:
-        TIMEZONE = None
-    else:
-        TIMEZONE = None
+    TIMEZONE = None
 except KeyError:
     TIMEZONE = "Asia/Kolkata"
 
