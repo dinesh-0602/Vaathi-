@@ -48,10 +48,8 @@ def stats(update, context):
 
 
 def start(update, context):
-    start_string = f"""
-This is a bot which can mirror all your links to Google drive!
-Type /help to get a list of available commands
-"""
+    start_string = '\x1fThis is a bot which can mirror all your links to Google drive!\x1fType /help to get a list of available commands\x1f'
+
     sendMessage(start_string, context.bot, update)
 
 
