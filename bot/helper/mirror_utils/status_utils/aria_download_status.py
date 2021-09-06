@@ -99,7 +99,8 @@ class AriaDownloadStatus(Status):
         LOGGER.info(f"Cancelling Download: {self.name()}")
         download = self.aria_download()
         if download.is_waiting:
-            aria2.remove([download])
+            aria2.remove([download], force=True)
+            aria2.purge()
             self.__listener.onDownloadError("Cancelled by user")
             return
         if len(download.followed_by_ids) != 0:
