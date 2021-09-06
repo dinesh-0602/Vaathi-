@@ -105,7 +105,7 @@ class TelegramDownloadHelper(DownloadHelper):
 
             if download:
                 if STOP_DUPLICATE_MIRROR:
-                    LOGGER.info(f"Checking File/Folder if already in Drive...")
+                    LOGGER.info('Checking File/Folder if already in Drive...')
                     if self.__listener.isTar:
                         name = name + ".tar"
                     if self.__listener.extract:
