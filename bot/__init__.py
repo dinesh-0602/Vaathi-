@@ -21,7 +21,6 @@ import faulthandler
 faulthandler.enable()
 
 socket.setdefaulttimeout(600)
-
 botStartTime = time.time()
 if os.path.exists("log.txt"):
     with open("log.txt", "r+") as f:
@@ -37,8 +36,8 @@ if CONFIG_FILE_URL is not None:
     res = requests.get(CONFIG_FILE_URL)
     if res.status_code == 200:
         with open('config.env', 'wb') as f:
-           f.truncate(0)
-           f.write(res.content)
+            f.truncate(0)
+            f.write(res.content)
     else:
         logging.error(res.status_code)
 
@@ -121,6 +120,34 @@ try:
 except KeyError:
     LOGGER.error("One or more env variables missing! Exiting now")
     exit(1)
+
+try:
+    DB_URI = getConfig('DATABASE_URL')
+    if len(DB_URI) == 0:
+        raise KeyError
+except KeyError:
+    logging.warning('Database not provided!')
+    DB_URI = None
+if DB_URI is not None:
+    try:
+        conn = psycopg2.connect(DB_URI)
+        cur = conn.cursor()
+        sql = "SELECT * from users;"
+        cur.execute(sql)
+        rows = cur.fetchall()  #returns a list ==> (uid, sudo)
+        for row in rows:
+            AUTHORIZED_CHATS.add(row[0])
+            if row[1]:
+                SUDO_USERS.add(row[0])
+    except Error as e:
+        if 'relation "users" does not exist' in str(e):
+            mktable()
+        else:
+            LOGGER.error(e)
+            exit(1)
+    finally:
+        cur.close()
+        conn.close()
 
 LOGGER.info("Generating USER_SESSION_STRING")
 app = Client(
@@ -249,8 +276,8 @@ try:
         res = requests.get(TOKEN_PICKLE_URL)
         if res.status_code == 200:
             with open('token.pickle', 'wb') as f:
-               f.truncate(0)
-               f.write(res.content)
+                f.truncate(0)
+                f.write(res.content)
         else:
             logging.error(res.status_code)
             raise KeyError
@@ -264,8 +291,8 @@ try:
         res = requests.get(ACCOUNTS_ZIP_URL)
         if res.status_code == 200:
             with open('accounts.zip', 'wb') as f:
-               f.truncate(0)
-               f.write(res.content)
+                f.truncate(0)
+                f.write(res.content)
         else:
             logging.error(res.status_code)
             raise KeyError
