@@ -288,6 +288,14 @@ def _mirror(bot, update, isZip=False, extract=False):
                 file = i
                 break
 
+        reply_text = reply_to.text.split('\n')[0]
+        if bot_utils.is_magnet(reply_text):
+            link = reply_text
+
+        reply_text = reply_to.text.split('\n')[0]
+        if bot_utils.is_url(reply_text):
+            link = reply_text
+
         if (
             not bot_utils.is_url(link)
             and not bot_utils.is_magnet(link)
