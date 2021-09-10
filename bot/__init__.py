@@ -329,7 +329,11 @@ try:
         os.remove("accounts.zip")
 except KeyError:
     pass
-
+try:
+    VIEW_LINK = getconfig("VIEW_LINK")
+    VIEW_LINK = None
+except KeyError:
+    VIEW_LINK = False
 try:
     TIMEZONE = getConfig("Asia/Kolkata")
     TIMEZONE = None
