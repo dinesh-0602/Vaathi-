@@ -10,6 +10,7 @@ import pytz
 from pyrogram import idle
 from telegram.ext import CommandHandler
 from telegram.error import BadRequest, Unauthorized
+from telegram import ParseMode
 
 from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, TIMEZONE, AUTHORIZED_CHATS
 from bot.helper.ext_utils import fs_utils
@@ -18,7 +19,7 @@ from bot.helper.telegram_helper.message_utils import *
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper import button_build
-from .modules import authorize, list, cancel_mirror, mirror_status, mirror, watch, delete
+from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, eval, delete
 now=datetime.now(pytz.timezone(f'{TIMEZONE}'))
 
 
