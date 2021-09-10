@@ -11,7 +11,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY . .
 COPY .netrc /root/.netrc
-RUN chmod 600 /usr/src/app/netrc
+RUN chmod 600 /usr/src/app/.netrc
 RUN chmod +x aria.sh
 
 
