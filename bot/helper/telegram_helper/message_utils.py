@@ -121,15 +121,14 @@ def update_all_messages():
     with status_reply_dict_lock:
         for chat_id in list(status_reply_dict.keys()):
             if status_reply_dict[chat_id] and msg != status_reply_dict[chat_id].text:
-                if len(msg) == 0:
-                    msg = "Starting DL"
                 try:
-                    editMessage(msg, status_reply_dict[chat_id])
-                else:
-                    editMessage(msg, status_reply_dict[chat_id], buttons)
-            except Exception as e:
-                LOGGER.error(str(e))
-        status_reply_dict[chat_id].text = msg
+                    if buttons == "":
+                        editMessage(msg, status_reply_dict[chat_id])
+                    else:
+                        editMessage(msg, status_reply_dict[chat_id], buttons)
+                except Exception as e:
+                    LOGGER.error(str(e))
+                status_reply_dict[chat_id].text = msg
 
 
 def sendStatusMessage(msg, bot):
