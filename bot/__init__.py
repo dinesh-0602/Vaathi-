@@ -55,6 +55,19 @@ def getConfig(name: str):
 
 LOGGER = logging.getLogger(__name__)
 
+
+def mktable():
+    try:
+        conn = psycopg2.connect(DB_URI)
+        cur = conn.cursor()
+        sql = "CREATE TABLE users (uid bigint, sudo boolean DEFAULT FALSE);"
+        cur.execute(sql)
+        conn.commit()
+        logging.info("Table Created!")
+    except Error as e:
+        logging.error(e)
+        exit(1)
+
 try:
     if bool(getConfig("_____REMOVE_THIS_LINE_____")):
         logging.error("The README.md file there to be read! Exiting now!")

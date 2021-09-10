@@ -471,20 +471,24 @@ class GoogleDriveHelper:
                     pass
                 if INDEX_URL is not None:
                     url_path = requests.utils.quote(f'{file.get("name")}')
-                    url = f"{INDEX_URL}/{url_path}"
+                    url = f'{INDEX_URL}/{url_path}'
+                    urls = f'{INDEX_URL}/{url_path}?a=view'
                     if SHORTENER is not None and SHORTENER_API is not None:
-                        siurl = requests.get(
-                            f"https://{SHORTENER}/api?api={SHORTENER_API}&url={url}&format=text"
-                        ).text
-                        buttons.buildbutton("Index Link", siurl)
+                        siurl = short_url(url)
+                        buttons.buildbutton("⚡ Index Link", siurl)
+                        if VIEW_LINK:
+                            siurls = short_url(urls)
+                            buttons.buildbutton("🌐 View Link", siurls)
                     else:
-                        buttons.buildbutton("Index Link", url)
-            if BUTTON_THREE_NAME is not None and BUTTON_THREE_URL is not None:
-                buttons.buildbutton(f"{BUTTON_THREE_NAME}", f"{BUTTON_THREE_URL}")
+                        buttons.buildbutton("⚡ Index Link", url)
+                        if VIEW_LINK:
+                            buttons.buildbutton("🌐 View Link", urls)
             if BUTTON_FOUR_NAME is not None and BUTTON_FOUR_URL is not None:
                 buttons.buildbutton(f"{BUTTON_FOUR_NAME}", f"{BUTTON_FOUR_URL}")
             if BUTTON_FIVE_NAME is not None and BUTTON_FIVE_URL is not None:
                 buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
+            if BUTTON_SIX_NAME is not None and BUTTON_SIX_URL is not None:
+                buttons.buildbutton(f"{BUTTON_SIX_NAME}", f"{BUTTON_SIX_URL}")
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(f"Total Attempts: {err.last_attempt.attempt_number}")
@@ -617,9 +621,9 @@ class GoogleDriveHelper:
                     nxt_page += 1
             Telegraph(access_token=telegraph_token).edit_page(
                 path=self.path[prev_page],
-                title="Mirror Bot Search",
-                author_name="Mirror Bot",
-                author_url="https://github.com/magneto261290/magneto-python-aria",
+                title="VaathiCloud Search",
+                author_name="t.me/kaiipulla",
+                author_url="https://github.com/bodysoda69",
                 html_content=content,
             )
         return
@@ -690,16 +694,20 @@ class GoogleDriveHelper:
                     msg += f"<b><a href={sfurl}>Drive Link</a></b>"
                 else:
                     msg += f"<b><a href={furl}>Drive Link</a></b>"
-                if INDEX_URL is not None:
-                    url_path = requests.utils.quote(f'{file.get("name")}')
-                    url = f"{INDEX_URL}/{url_path}"
-                    if SHORTENER is not None and SHORTENER_API is not None:
-                        siurl = requests.get(
-                            f"https://{SHORTENER}/api?api={SHORTENER_API}&url={url}&format=text"
-                        ).text
-                        msg += f' <b>| <a href="{siurl}">Index Link</a></b>'
-                    else:
-                        msg += f' <b>| <a href="{url}">Index Link</a></b>'
+                if INDEX_URLS[index] is not None:
+                        url_path = requests.utils.quote(f'{file.get("name")}')
+                        url = f'{INDEX_URLS[index]}/{url_path}'
+                        urls = f'{INDEX_URLS[index]}/{url_path}?a=view'
+                        if SHORTENER is not None and SHORTENER_API is not None:
+                            siurl = short_url(url)
+                            msg += f' <b>| <a href="{siurl}">Index Link</a></b>'
+                            if VIEW_LINK:
+                                siurls = short_url(urls)
+                                msg += f' <b>| <a href="{siurls}">View Link</a></b>'
+                        else:
+                            msg += f' <b>| <a href="{url}">Index Link</a></b>'
+                            if VIEW_LINK:
+                                msg += f' <b>| <a href="{urls}">View Link</a></b>'
             msg += "<br><br>"
             content_count += 1
             if content_count == TELEGRAPHLIMIT:
@@ -716,9 +724,9 @@ class GoogleDriveHelper:
         for content in self.telegraph_content:
             self.path.append(
                 Telegraph(access_token=telegraph_token).create_page(
-                    title="Mirror Bot Search",
-                    author_name="Mirror Bot",
-                    author_url="https://github.com/magneto261290/magneto-python-aria",
+                    title="VaathiCloud Search",
+                    author_name="t.me/kaiipulla",
+                    author_url="https://github.com/bodysoda69",
                     html_content=content,
                 )["path"]
             )

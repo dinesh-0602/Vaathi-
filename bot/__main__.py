@@ -125,8 +125,6 @@ def main():
     # Heroku restarted
     quo_te = Quote.print()
     GROUP_ID = os.environ.get("AUTHORIZED_CHATS")
-    kie = datetime.now(pytz.timezone(f'{TIMEZONE}'))
-    jam = kie.strftime('\n📅 𝘿𝘼𝙏𝙀: %d/%m/%Y\n⏲️ 𝙏𝙄𝙈𝙀: %I:%M%P')
     if GROUP_ID is not None and isinstance(GROUP_ID, str):
         try:
             dispatcher.bot.sendMessage(f"{GROUP_ID}", f"𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃!♻️\n\n𝐐𝐮𝐨𝐭𝐞\n{quo_te}\n\n#Rebooted")
@@ -156,7 +154,7 @@ def main():
     ping_handler = CommandHandler(
         BotCommands.PingCommand,
         ping,
-        filters=CustomFilters.authorized_chat | CustomFilters.authorized_user,
+        filters=CustomFilters.sudo_user | CustomFilters.sudo_user,
         run_async=True,
     )
     restart_handler = CommandHandler(
@@ -178,7 +176,7 @@ def main():
         run_async=True,
     )
     log_handler = CommandHandler(
-        BotCommands.LogCommand, log, filters=CustomFilters.owner_filter, run_async=True
+        BotCommands.LogCommand, log, filters=CustomFilters.owner_filter | CustomFilters.sudo_user, run_async=True
     )
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(ping_handler)
