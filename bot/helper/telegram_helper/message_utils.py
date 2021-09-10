@@ -127,9 +127,9 @@ def update_all_messages():
                     editMessage(msg, status_reply_dict[chat_id])
                 else:
                     editMessage(msg, status_reply_dict[chat_id], buttons)
-                except Exception as e:
-                    LOGGER.error(str(e))
-                status_reply_dict[chat_id].text = msg
+            except Exception as e:
+                LOGGER.error(str(e))
+        status_reply_dict[chat_id].text = msg
 
 
 def sendStatusMessage(msg, bot):
