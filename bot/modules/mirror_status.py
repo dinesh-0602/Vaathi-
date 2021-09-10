@@ -16,14 +16,12 @@ from bot.helper.telegram_helper.message_utils import (
 
 
 def mirror_status(update, context):
-    message = get_readable_message()
-    if len(message) == 0:
-        message = "No active downloads"
-        reply_message = sendMessage(message, context.bot, update)
-        threading.Thread(
-            target=auto_delete_message, args=(bot, update.message, reply_message)
-        ).start()
-        return
+    with download_dict_lock:
+        if len(download_dict) == 0:
+            message = "No active downloads"
+            reply_message = sendMessage(message, context.bot, update)
+            threading.Thread(target=auto_delete_message, args=(bot, update.message, reply_message)).start()
+            return
     index = update.effective_chat.id
     with status_reply_dict_lock:
         if index in status_reply_dict.keys():
