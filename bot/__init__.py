@@ -252,6 +252,19 @@ except KeyError:
     BUTTON_FIVE_NAME = None
     BUTTON_FIVE_URL = None
 try:
+    BUTTON_SIX_NAME = getConfig('BUTTON_SIX_NAME')
+    BUTTON_SIX_URL = getConfig('BUTTON_SIX_URL')
+    if len(BUTTON_SIX_NAME) == 0 or len(BUTTON_SIX_URL) == 0:
+        raise KeyError
+except KeyError:
+    BUTTON_SIX_NAME = None
+    BUTTON_SIX_URL = None
+try:
+    STOP_DUPLICATE_MIRROR = getConfig('STOP_DUPLICATE_MIRROR')
+    STOP_DUPLICATE_MIRROR = STOP_DUPLICATE_MIRROR.lower() == 'true'
+except KeyError:
+    STOP_DUPLICATE_MIRROR = False
+try:
     IS_TEAM_DRIVE = getConfig("IS_TEAM_DRIVE")
     IS_TEAM_DRIVE = IS_TEAM_DRIVE.lower() == "true"
 except KeyError:
