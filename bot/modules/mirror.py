@@ -13,17 +13,18 @@ from telegram.ext import CommandHandler
 
 from bot import (
     BLOCK_MEGA_LINKS,
+    BUTTON_SIX_NAME,
+    BUTTON_SIX_URL,
     BUTTON_FIVE_NAME,
     BUTTON_FIVE_URL,
     BUTTON_FOUR_NAME,
     BUTTON_FOUR_URL,
-    BUTTON_THREE_NAME,
-    BUTTON_THREE_URL,
     DOWNLOAD_DIR,
     DOWNLOAD_STATUS_UPDATE_INTERVAL,
     INDEX_URL,
     LOGGER,
     MEGA_KEY,
+    VIEW_LINK
     SHORTENER,
     SHORTENER_API,
     Interval,
@@ -201,14 +202,18 @@ class MirrorListener(listeners.MirrorListeners):
                         f"https://{SHORTENER}/api?api={SHORTENER_API}&url={share_url}&format=text"
                     ).text
                     buttons.buildbutton("Index Link", siurl)
+                    if VIEW_LINK:
+                            buttons.buildbutton("🌐 View Link", siurls)
                 else:
                     buttons.buildbutton("Index Link", share_url)
-            if BUTTON_THREE_NAME is not None and BUTTON_THREE_URL is not None:
-                buttons.buildbutton(f"{BUTTON_THREE_NAME}", f"{BUTTON_THREE_URL}")
+                    if VIEW_LINK:
+                            buttons.buildbutton("🌐 View Link", share_urls)
             if BUTTON_FOUR_NAME is not None and BUTTON_FOUR_URL is not None:
                 buttons.buildbutton(f"{BUTTON_FOUR_NAME}", f"{BUTTON_FOUR_URL}")
             if BUTTON_FIVE_NAME is not None and BUTTON_FIVE_URL is not None:
                 buttons.buildbutton(f"{BUTTON_FIVE_NAME}", f"{BUTTON_FIVE_URL}")
+            if BUTTON_SIX_NAME is not None and BUTTON_SIX_URL is not None:
+                buttons.buildbutton(f"{BUTTON_SIX_NAME}", f"{BUTTON_SIX_URL}")
             if self.message.from_user.username:
                 uname = f"@{self.message.from_user.username}"
             else:

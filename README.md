@@ -5,10 +5,6 @@
   in one.
 - So, credits goes to original repo holder, not to me. I have just collected
   them.
-- This (or any custom) repo is not supported in official bot support group.
-- So if you have any issue then check first that issue is in official repo or
-  not, You are only allowed to report that issue in bot support group if that
-  issue is also present in official repo.
 
 ## Features Coming soon....
 
@@ -21,46 +17,26 @@ magnet/torrents
 
 - Rename Drive files
 
-Let's have some chit chat here -
-[@Magneto_chit_chat](https://t.me/magneto_chit_chat) Note :- it is not a Bot
-Support group. It's only for discussing rubbish things bcoz i want your help to
-learn coding .
 
 ## Credits :-
 
 - First of all, full credit goes to
   [Shivam Jha aka lzzy12](https://github.com/lzzy12) and
-  [JaskaranSM aka Zero Cool](https://github.com/jaskaranSM) They build up this
+- Thanks to [SlamDevs](https://github.com/SlamDevs/slam-mirrorbot) For Awesome Features
+- [JaskaranSM aka Zero Cool](https://github.com/jaskaranSM) They build up this
   bot from scratch.
-- Then a huge thanks to [Sreeraj V R](https://github.com/SVR666) You can
-  checkout his [repo here](https://github.com/SVR666/LoaderX-Bot)
 - Features added from [Sreeraj V R's](https://github.com/SVR666) repo -
 
 ````
 1. Added Inline Buttons
 2. Added /del command to delete files from drive
 3. /list module will post search result on telegra.ph ```
-````
-
-- Special thanks to [archie](https://github.com/archie9211) for very much useful
-  feature **Unzipmirror**
-- Features added from [archie's](https://github.com/archie9211) repo
-
-````
-1. unzipmirror
-2. Update tracker list dynamically
-3. Fix SSL handsake error ```
-````
 
 # What is this repo about?
 
 This is a telegram bot writen in python for mirroring files on the internet to
 our beloved Google Drive.
 
-# Inspiration
-
-This project is heavily inspired from @out386 's telegram bot which is written
-in JS.
 
 # Features supported:
 
@@ -89,24 +65,6 @@ in JS.
   from password protected index links see these examples :-
   > https://telegra.ph/Magneto-Python-Aria---Custom-Filename-Examples-01-20
 
-## Bot commands to be set in botfather
-
-```
-mirror - Start Mirroring
-zipmirror - Upload zip (zipped) file
-unzipmirror - Extract files
-clone - copy folder to drive
-watch - mirror YT-DL support link
-zipmirror - mirror youtube playlist link as zip
-cancel - Cancel a task
-cancelall - Cancel all tasks
-del - Delete file from Drive
-list - [query] searches files in G-Drive
-status - Get Mirror Status message
-stats - Bot Usage Stats
-help - Get Detailed Help
-log - Bot Log [owner only]
-```
 
 # How to deploy?
 
@@ -175,7 +133,7 @@ Fill up rest of the fields. Meaning of each fields are discussed below:
   use service accounts or not. For this to work see "Using service accounts"
   section below.
 - **INDEX_URL** : (Optional field) Refer to
-  https://github.com/maple3142/GDIndex/ The URL should not have any trailing '/'
+  https://gitlab.com/parveenbhadooofficial/Bhadoo-Index The URL should not have any trailing '/'
 - **API_KEY** : This is to authenticate to your telegram account for downloading
   Telegram files. You can get this from https://my.telegram.org DO NOT put this
   in quotes.
