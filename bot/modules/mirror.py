@@ -24,7 +24,7 @@ from bot import (
     INDEX_URL,
     LOGGER,
     MEGA_KEY,
-    VIEW_LINK
+    VIEW_LINK,
     SHORTENER,
     SHORTENER_API,
     Interval,
