@@ -63,32 +63,29 @@ def addSudo(update, context):
     message_ = update.message.text.split(' ')
     if len(message_) == 2:
         user_id = int(message_[1])
-        if user_id not in SUDO_USERS:
-            if DB_URI is not None:
-                msg = DbManger().db_addsudo(user_id)
-            else:
-                with open('sudo_users.txt', 'a') as file:
-                    file.write(f'{user_id}\n')
-                    SUDO_USERS.add(user_id)
-                    msg = 'Promoted as Sudo'
-        else:
+        if user_id in SUDO_USERS:
             msg = 'Already Sudo'
-    else:
-        if reply_message is None:
-            msg = "Give ID or Reply To message of whom you want to Promote"
+        elif DB_URI is not None:
+            msg = DbManger().db_addsudo(user_id)
         else:
-            # Trying to authorize someone by replying
-            user_id = reply_message.from_user.id
-            if user_id not in SUDO_USERS:
-                if DB_URI is not None:
-                    msg = DbManger().db_addsudo(user_id)
-                else:
-                    with open('sudo_users.txt', 'a') as file:
-                        file.write(f'{user_id}\n')
-                        SUDO_USERS.add(user_id)
-                        msg = 'Promoted as Sudo'
-            else:
-                msg = 'Already Sudo'
+            with open('sudo_users.txt', 'a') as file:
+                file.write(f'{user_id}\n')
+                SUDO_USERS.add(user_id)
+                msg = 'Promoted as Sudo'
+    elif reply_message is None:
+        msg = "Give ID or Reply To message of whom you want to Promote"
+    else:
+        # Trying to authorize someone by replying
+        user_id = reply_message.from_user.id
+        if user_id in SUDO_USERS:
+            msg = 'Already Sudo'
+        elif DB_URI is not None:
+            msg = DbManger().db_addsudo(user_id)
+        else:
+            with open('sudo_users.txt', 'a') as file:
+                file.write(f'{user_id}\n')
+                SUDO_USERS.add(user_id)
+                msg = 'Promoted as Sudo'
     sendMessage(msg, context.bot, update)
 
 
@@ -96,7 +93,7 @@ def removeSudo(update, context):
     reply_message = None
     message_ = None
     reply_message = update.message.reply_to_message
-    message_ = update.message.text.split(' ') 
+    message_ = update.message.text.split(' ')
     if len(message_) == 2:
         user_id = int(message_[1])
         if user_id in SUDO_USERS:
@@ -107,19 +104,18 @@ def removeSudo(update, context):
                 msg = 'Demoted'
         else:
             msg = 'Not a Sudo'
+    elif reply_message is None:
+        msg = "Give ID or Reply To message of whom you want to remove from Sudo"
     else:
-        if reply_message is None:
-            msg = "Give ID or Reply To message of whom you want to remove from Sudo"
-        else:
-            user_id = reply_message.from_user.id
-            if user_id in SUDO_USERS:
-                if DB_URI is not None:
-                    msg = DbManger().db_rmsudo(user_id)
-                else:
-                    SUDO_USERS.remove(user_id)
-                    msg = 'Demoted'
+        user_id = reply_message.from_user.id
+        if user_id in SUDO_USERS:
+            if DB_URI is not None:
+                msg = DbManger().db_rmsudo(user_id)
             else:
-                msg = 'Not a Sudo'
+                SUDO_USERS.remove(user_id)
+                msg = 'Demoted'
+        else:
+            msg = 'Not a Sudo'
     if DB_URI is None:
         with open('sudo_users.txt', 'a') as file:
             file.truncate(0)

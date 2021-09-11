@@ -125,6 +125,19 @@ class TelegramDownloadHelper(DownloadHelper):
                     self.__is_cancelled = True
                     return
 
+            if download:
+                if STOP_DUPLICATE_MIRROR:
+                    LOGGER.info('Checking File/Folder if already in Drive...')
+                    if self.__listener.isTar:
+                        name = name + ".tar"
+                    if self.__listener.extract:
+                        smsg = None
+                    else:
+                        gd = GoogleDriveHelper()
+                        smsg, button = gd.drive_list(name)
+                    if smsg:
+                        sendMarkup("File/Folder is already available in Drive.\nHere are the search results:", self.__listener.bot, self.__listener.update, button)
+                        return
                 self.__onDownloadStart(name, media.file_size, media.file_id)
                 LOGGER.info(f"Downloading Telegram file with id: {media.file_id}")
                 threading.Thread(target=self.__download, args=(_message, path)).start()
