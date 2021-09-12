@@ -16,6 +16,9 @@ from telegraph import Telegraph
 from megasdkrestclient import MegaSdkRestClient
 from megasdkrestclient import errors as mega_err
 
+import psycopg2
+from psycopg2 import Error
+
 import socket
 import faulthandler
 faulthandler.enable()
@@ -51,6 +54,19 @@ def getConfig(name: str):
 
 
 LOGGER = logging.getLogger(__name__)
+
+
+def mktable():
+    try:
+        conn = psycopg2.connect(DB_URI)
+        cur = conn.cursor()
+        sql = "CREATE TABLE users (uid bigint, sudo boolean DEFAULT FALSE);"
+        cur.execute(sql)
+        conn.commit()
+        logging.info("Table Created!")
+    except Error as e:
+        logging.error(e)
+        exit(1)
 
 try:
     if bool(getConfig("_____REMOVE_THIS_LINE_____")):
@@ -134,7 +150,7 @@ if DB_URI is not None:
         cur = conn.cursor()
         sql = "SELECT * from users;"
         cur.execute(sql)
-        rows = cur.fetchall()  #returns a list ==> (uid, sudo)
+        rows = cur.fetchall()  # returns a list ==> (uid, sudo)
         for row in rows:
             AUTHORIZED_CHATS.add(row[0])
             if row[1]:
@@ -206,6 +222,15 @@ else:
     MEGA_USERNAME = None
     MEGA_PASSWORD = None
 try:
+    HEROKU_API_KEY = getConfig('HEROKU_API_KEY')
+    HEROKU_APP_NAME = getConfig('HEROKU_APP_NAME')
+    if len(HEROKU_API_KEY) == 0 or len(HEROKU_APP_NAME) == 0:
+        HEROKU_API_KEY = None
+        HEROKU_APP_NAME = None
+except KeyError:
+    HEROKU_API_KEY = None
+    HEROKU_APP_NAME = None
+try:
     INDEX_URL = getConfig("INDEX_URL")
     if len(INDEX_URL) == 0:
         INDEX_URL = None
@@ -235,6 +260,19 @@ try:
 except KeyError:
     BUTTON_FIVE_NAME = None
     BUTTON_FIVE_URL = None
+try:
+    BUTTON_SIX_NAME = getConfig('BUTTON_SIX_NAME')
+    BUTTON_SIX_URL = getConfig('BUTTON_SIX_URL')
+    if len(BUTTON_SIX_NAME) == 0 or len(BUTTON_SIX_URL) == 0:
+        raise KeyError
+except KeyError:
+    BUTTON_SIX_NAME = None
+    BUTTON_SIX_URL = None
+try:
+    STOP_DUPLICATE_MIRROR = getConfig('STOP_DUPLICATE_MIRROR')
+    STOP_DUPLICATE_MIRROR = STOP_DUPLICATE_MIRROR.lower() == 'true'
+except KeyError:
+    STOP_DUPLICATE_MIRROR = False
 try:
     IS_TEAM_DRIVE = getConfig("IS_TEAM_DRIVE")
     IS_TEAM_DRIVE = IS_TEAM_DRIVE.lower() == "true"
@@ -300,7 +338,11 @@ try:
         os.remove("accounts.zip")
 except KeyError:
     pass
-
+try:
+    VIEW_LINK = getConfig("VIEW_LINK")
+    VIEW_LINK = None
+except KeyError:
+    VIEW_LINK = "False"
 try:
     TIMEZONE = getConfig("Asia/Kolkata")
     TIMEZONE = None

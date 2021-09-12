@@ -2,6 +2,7 @@ import os
 import shutil, psutil
 import signal
 from sys import executable
+import asyncio
 from datetime import datetime
 from quoters import Quote
 import time
@@ -10,6 +11,7 @@ import pytz
 from pyrogram import idle
 from telegram.ext import CommandHandler
 from telegram.error import BadRequest, Unauthorized
+from telegram import ParseMode
 
 from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, TIMEZONE, AUTHORIZED_CHATS
 from bot.helper.ext_utils import fs_utils
@@ -18,7 +20,7 @@ from bot.helper.telegram_helper.message_utils import *
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper import button_build
-from .modules import authorize, list, cancel_mirror, mirror_status, mirror, watch, delete
+from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, speedtest, eval, delete, reboot
 now=datetime.now(pytz.timezone(f'{TIMEZONE}'))
 
 
@@ -48,9 +50,23 @@ def stats(update, context):
 
 
 def start(update, context):
-    start_string = '\x1fThis is a bot which can mirror all your links to Google drive!\x1fType /help to get a list of available commands\x1f'
-
-    sendMessage(start_string, context.bot, update)
+    buttons = button_build.ButtonMaker()
+    buttons.buildbutton("Owner", "https://t.me/kaiipulla")
+    buttons.buildbutton("Channel", "https://t.me/VaathiCloud")
+    reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
+    if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
+        start_string = f'''
+This bot can mirror all your links to Google Drive!
+Type /{BotCommands.HelpCommand} to get a list of available commands
+'''
+        sendMarkup(start_string, context.bot, update, reply_markup)
+    else:
+        sendMarkup(
+            'Oops! not a Authorized user.',
+            context.bot,
+            update,
+            reply_markup,
+        )
 
 
 def restart(update, context):
@@ -125,8 +141,6 @@ def main():
     # Heroku restarted
     quo_te = Quote.print()
     GROUP_ID = os.environ.get("AUTHORIZED_CHATS")
-    kie = datetime.now(pytz.timezone(f'{TIMEZONE}'))
-    jam = kie.strftime('\n📅 𝘿𝘼𝙏𝙀: %d/%m/%Y\n⏲️ 𝙏𝙄𝙈𝙀: %I:%M%P')
     if GROUP_ID is not None and isinstance(GROUP_ID, str):
         try:
             dispatcher.bot.sendMessage(f"{GROUP_ID}", f"𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃!♻️\n\n𝐐𝐮𝐨𝐭𝐞\n{quo_te}\n\n#Rebooted")
@@ -156,7 +170,7 @@ def main():
     ping_handler = CommandHandler(
         BotCommands.PingCommand,
         ping,
-        filters=CustomFilters.authorized_chat | CustomFilters.authorized_user,
+        filters=CustomFilters.owner_filter | CustomFilters.sudo_user,
         run_async=True,
     )
     restart_handler = CommandHandler(
@@ -168,7 +182,7 @@ def main():
     help_handler = CommandHandler(
         BotCommands.HelpCommand,
         bot_help,
-        filters=CustomFilters.authorized_chat | CustomFilters.authorized_user,
+        filters=CustomFilters.owner_filter | CustomFilters.sudo_user,
         run_async=True,
     )
     stats_handler = CommandHandler(
@@ -178,7 +192,7 @@ def main():
         run_async=True,
     )
     log_handler = CommandHandler(
-        BotCommands.LogCommand, log, filters=CustomFilters.owner_filter, run_async=True
+        BotCommands.LogCommand, log, filters=CustomFilters.owner_filter | CustomFilters.sudo_user, run_async=True
     )
     dispatcher.add_handler(start_handler)
     dispatcher.add_handler(ping_handler)
