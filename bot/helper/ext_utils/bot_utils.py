@@ -115,7 +115,10 @@ def get_readable_message():
             if INDEX > COUNT:
                 msg += f"<b>Filename:</b> <code>{download.name()}</code>"
                 msg += f"\n<b>Status:</b> <i>{download.status()}</i>"
-                if download.status() != MirrorStatus.STATUS_ARCHIVING and download.status() != MirrorStatus.STATUS_EXTRACTING:
+                if download.status() not in [
+                    MirrorStatus.STATUS_ARCHIVING,
+                    MirrorStatus.STATUS_EXTRACTING,
+                ]:
                     msg += f"\n<code>{get_progress_bar_string(download)} {download.progress()}</code>"
                     if download.status() == MirrorStatus.STATUS_DOWNLOADING:
                         msg += f"\n<b>Downloaded:</b> {get_readable_file_size(download.processed_bytes())} of {download.size()}"
@@ -134,9 +137,8 @@ def get_readable_message():
                 msg += f"\n<b>To Stop 👉:</b> <code>/{BotCommands.CancelMirror} {download.gid()}</code>"
                 msg += f'\n<b>User:</b> <a href="tg://user?id={download.message.from_user.id}">{download.message.from_user.first_name}</a>'
             msg += "\n\n"
-            if STATUS_LIMIT is not None:
-                if INDEX >= COUNT + STATUS_LIMIT:
-                    break
+            if STATUS_LIMIT is not None and INDEX >= COUNT + STATUS_LIMIT:
+                break
         if STATUS_LIMIT is not None:
             if INDEX > COUNT + STATUS_LIMIT:
                 return None, None
