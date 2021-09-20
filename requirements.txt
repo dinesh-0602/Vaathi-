@@ -17,7 +17,6 @@ Pyrogram
 python-dotenv
 python-magic
 python-telegram-bot
-pytz
 quoters
 requests
 telegraph
@@ -25,4 +24,3 @@ tenacity
 TgCrypto
 urllib3
 yt-dlp
-
