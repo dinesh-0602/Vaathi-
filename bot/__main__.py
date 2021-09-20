@@ -140,17 +140,6 @@ botcmds = [
 def main():
     # Heroku restarted
     quo_te = Quote.print()
-    GROUP_ID = os.environ.get("AUTHORIZED_CHATS")
-    if GROUP_ID is not None and isinstance(GROUP_ID, str):
-        try:
-            dispatcher.bot.sendMessage(f"{GROUP_ID}", f"𝐁𝐎𝐓 𝐑𝐄𝐒𝐓𝐀𝐑𝐓𝐄𝐃!♻️\n\n𝐐𝐮𝐨𝐭𝐞\n{quo_te}\n\n#Rebooted")
-        except Unauthorized:
-            LOGGER.warning(
-                "Bot isnt able to send message to support_chat, go and check!"
-            )
-        except BadRequest as e:
-            LOGGER.warning(e.message)
-
     fs_utils.start_cleanup()
 
     # Check if the bot is restarting
@@ -159,6 +148,13 @@ def main():
             chat_id, msg_id = map(int, f)
         bot.edit_message_text("Restarted successfully!", chat_id, msg_id)
         os.remove(".restartmsg")
+    elif AUTHORIZED_CHATS:
+        for i in AUTHORIZED_CHATS:
+            try:
+                text = f"<code>{quo_te}</code>\n\nBot Rebooted!♻️"
+                bot.sendMessage(chat_id=i, text=text, parse_mode=ParseMode.HTML)
+            except Exception as e:
+                LOGGER.warning(e)    
     bot.set_my_commands(botcmds)
 
     start_handler = CommandHandler(
