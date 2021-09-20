@@ -343,11 +343,6 @@ try:
     VIEW_LINK = None
 except KeyError:
     VIEW_LINK = "False"
-try:
-    TIMEZONE = getConfig("Asia/Kolkata")
-    TIMEZONE = None
-except KeyError:
-    TIMEZONE = "Asia/Kolkata"
 
 updater = tg.Updater(token=BOT_TOKEN)
 bot = updater.bot
