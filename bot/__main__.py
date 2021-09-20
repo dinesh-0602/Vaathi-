@@ -17,7 +17,7 @@ from bot.helper.telegram_helper.message_utils import *
 from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper import button_build
-from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, speedtest, eval, delete, reboot
+from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, delete, reboot
 
 
 def stats(update, context):
@@ -47,7 +47,7 @@ def stats(update, context):
 
 def start(update, context):
     buttons = button_build.ButtonMaker()
-    buttons.buildbutton("Owner", "https://t.me/kaiipulla")
+    buttons.buildbutton("Repo", "https://github.com/bodysoda69/Vaathi-")
     buttons.buildbutton("Channel", "https://t.me/VaathiCloud")
     reply_markup = InlineKeyboardMarkup(buttons.build_menu(2))
     if CustomFilters.authorized_user(update) or CustomFilters.authorized_chat(update):
