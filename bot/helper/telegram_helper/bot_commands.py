@@ -11,8 +11,6 @@ class _BotCommands:
         self.AuthorizedUsersCommand = "users"
         self.AuthorizeCommand = "authorize"
         self.UnAuthorizeCommand = "unauthorize"
-        self.AuthorizeCommand = "authorize"
-        self.UnAuthorizeCommand = "unauthorize"
         self.AddSudoCommand = "addsudo"
         self.RmSudoCommand = "rmsudo"
         self.PingCommand = "ping"
@@ -24,8 +22,6 @@ class _BotCommands:
         self.WatchCommand = "watch"
         self.ZipWatchCommand = "zipwatch"
         self.deleteCommand = "del"
-        self.ShellCommand = "shell"
-        self.ExecHelpCommand = "exechelp"
 
 
 BotCommands = _BotCommands()
