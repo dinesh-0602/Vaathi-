@@ -3,17 +3,14 @@ import shutil, psutil
 import signal
 from sys import executable
 import asyncio
-from datetime import datetime
 from quoters import Quote
-import time
-import pytz
 
 from pyrogram import idle
 from telegram.ext import CommandHandler
 from telegram.error import BadRequest, Unauthorized
 from telegram import ParseMode
 
-from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, TIMEZONE, AUTHORIZED_CHATS
+from bot import bot, app, dispatcher, updater, botStartTime, IGNORE_PENDING_REQUESTS, AUTHORIZED_CHATS
 from bot.helper.ext_utils import fs_utils
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.message_utils import *
@@ -21,7 +18,6 @@ from .helper.telegram_helper.filters import CustomFilters
 from .helper.ext_utils.bot_utils import get_readable_file_size, get_readable_time
 from bot.helper.telegram_helper import button_build
 from .modules import authorize, list, cancel_mirror, mirror_status, mirror, clone, watch, shell, speedtest, eval, delete, reboot
-now=datetime.now(pytz.timezone(f'{TIMEZONE}'))
 
 
 def stats(update, context):
