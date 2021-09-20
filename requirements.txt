@@ -24,3 +24,4 @@ tenacity
 TgCrypto
 urllib3
 yt-dlp
+heroku3
